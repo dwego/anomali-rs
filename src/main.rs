@@ -52,10 +52,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
     }
 }
 
-fn scan(
-    file: PathBuf,
-    column: String,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn scan(file: PathBuf, column: String) -> Result<(), Box<dyn std::error::Error>> {
     let column_data = csv::read_column(&file, &column)?;
 
     let mut analyzer = BenfordAnalyzer::new();
@@ -66,11 +63,7 @@ fn scan(
 
     let report = analyzer.finish()?;
 
-    render_benford_report(
-        &report,
-        &file,
-        &column_data.header,
-    );
+    render_benford_report(&report, &file, &column_data.header);
 
     Ok(())
 }

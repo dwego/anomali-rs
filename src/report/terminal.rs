@@ -5,11 +5,7 @@ use crate::benford::BenfordReport;
 const WIDTH: usize = 76;
 const MIN_RECOMMENDED_SAMPLE_SIZE: u64 = 100;
 
-pub fn render_benford_report(
-    report: &BenfordReport,
-    file: &Path,
-    column: &str,
-) {
+pub fn render_benford_report(report: &BenfordReport, file: &Path, column: &str) {
     print_header();
     print_source(file, column);
     print_summary(report);
@@ -40,41 +36,17 @@ fn print_summary(report: &BenfordReport) {
     println!("  Dataset summary");
     println!("  {}", "─".repeat(WIDTH - 4));
 
-    println!(
-        "  {:<22} {:>12}",
-        "Total values",
-        report.total_received()
-    );
+    println!("  {:<22} {:>12}", "Total values", report.total_received());
 
-    println!(
-        "  {:<22} {:>12}",
-        "Analyzed",
-        report.analyzed
-    );
+    println!("  {:<22} {:>12}", "Analyzed", report.analyzed);
 
-    println!(
-        "  {:<22} {:>12}",
-        "Zero values",
-        report.zeros
-    );
+    println!("  {:<22} {:>12}", "Zero values", report.zeros);
 
-    println!(
-        "  {:<22} {:>12}",
-        "Missing values",
-        report.missing
-    );
+    println!("  {:<22} {:>12}", "Missing values", report.missing);
 
-    println!(
-        "  {:<22} {:>12}",
-        "Invalid values",
-        report.invalid
-    );
+    println!("  {:<22} {:>12}", "Invalid values", report.invalid);
 
-    println!(
-        "  {:<22} {:>12}",
-        "Skipped",
-        report.skipped()
-    );
+    println!("  {:<22} {:>12}", "Skipped", report.skipped());
 }
 
 fn print_sample_warning(report: &BenfordReport) {
@@ -89,9 +61,7 @@ fn print_sample_warning(report: &BenfordReport) {
         "  This dataset contains only {} analyzable values.",
         report.analyzed
     );
-    println!(
-        "  Benford analysis is more reliable with larger datasets."
-    );
+    println!("  Benford analysis is more reliable with larger datasets.");
 }
 
 fn print_distribution(report: &BenfordReport) {
@@ -101,11 +71,7 @@ fn print_distribution(report: &BenfordReport) {
 
     println!(
         "  {:>5}  {:>10}  {:>12}  {:>12}  {:>12}",
-        "Digit",
-        "Count",
-        "Observed",
-        "Expected",
-        "Difference"
+        "Digit", "Count", "Observed", "Expected", "Difference"
     );
 
     println!("  {}", "─".repeat(WIDTH - 4));
@@ -127,11 +93,7 @@ fn print_result(report: &BenfordReport) {
     println!("  Analysis result");
     println!("  {}", "─".repeat(WIDTH - 4));
 
-    println!(
-        "  {:<22} {:>12.6}",
-        "Mean absolute deviation",
-        report.mad
-    );
+    println!("  {:<22} {:>12.6}", "Mean absolute deviation", report.mad);
 }
 
 fn print_disclaimer() {
