@@ -3,6 +3,7 @@ pub mod parser;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
+use anomali_rs::csv_reader;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -30,8 +31,23 @@ fn main() {
 
     match cli.command {
         Commands::Scan { file, column } => {
-            println!("File: {}", file.display());
-            println!("Column: {column}");
+            csv_read_column(&file, &column);
+        }
+    }
+}
+
+fn csv_read_column(file: &PathBuf, column: &String) {
+    match csv_reader::read_column(&file, &column) {
+        Ok(data) => {
+            println!(
+                "Read {} rows from column {:?}",
+                data.values.len(),
+                data.header
+            );
+        }
+        Err(error) => {
+            eprintln!("error: {error}");
+            std::process::exit(1);
         }
     }
 }
