@@ -31,13 +31,23 @@ fn main() {
 
     match cli.command {
         Commands::Scan { file, column } => {
-            let column = csv_reader::read_column(&file, &column).unwrap();
+            csv_read_column(&file, &column);
+        }
+    }
+}
 
+fn csv_read_column(file: &PathBuf, column: &String) {
+    match csv_reader::read_column(&file, &column) {
+        Ok(data) => {
             println!(
                 "Read {} rows from column {:?}",
-                column.values.len(),
-                column.header
+                data.values.len(),
+                data.header
             );
+        }
+        Err(error) => {
+            eprintln!("error: {error}");
+            std::process::exit(1);
         }
     }
 }
