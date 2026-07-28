@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use anomali_rs::parser::{first_significant_digit, ParsedValue};
+    use anomali_rs::parser::{ParsedValue, first_significant_digit};
     use rstest::rstest;
 
     #[rstest]
@@ -50,10 +50,7 @@ mod tests {
     #[case("Infinity", ParsedValue::Invalid)]
     #[case("1e3", ParsedValue::Invalid)]
     #[case("1_000", ParsedValue::Invalid)]
-    fn parses_values(
-        #[case] input: &str,
-        #[case] expected: ParsedValue,
-    ) {
+    fn parses_values(#[case] input: &str, #[case] expected: ParsedValue) {
         assert_eq!(
             first_significant_digit(input),
             expected,
