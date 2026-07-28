@@ -1,53 +1,76 @@
-pub mod parser;
+use std::path::PathBuf;
+use std::process::ExitCode;
 
-use std::path::{Path, PathBuf};
-
+use anomali_rs::benford::BenfordAnalyzer;
 use anomali_rs::csv;
+use anomali_rs::parser::first_significant_digit;
+use anomali_rs::report::terminal::render_benford_report;
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(
     name = "anomali",
     version,
-    about = "CLI to scan files for anomalies using benford's law"
+    about = "Detect unusual numerical patterns in datasets"
 )]
-pub struct Cli {
+struct Cli {
     #[command(subcommand)]
-    pub command: Commands,
+    command: Command,
 }
 
 #[derive(Debug, Subcommand)]
-pub enum Commands {
+enum Command {
     Scan {
+        /// Path to the CSV file
         file: PathBuf,
 
+        /// Name of the numerical column to analyze
         #[arg(long)]
         column: String,
     },
 }
 
-fn main() {
+fn main() -> ExitCode {
     let cli = Cli::parse();
 
-    match cli.command {
-        Commands::Scan { file, column } => {
-            csv_read_column(&file, &column);
+    match run(cli) {
+        Ok(()) => ExitCode::SUCCESS,
+
+        Err(error) => {
+            eprintln!();
+            eprintln!("  error: {error}");
+            eprintln!();
+
+            ExitCode::FAILURE
         }
     }
 }
 
-fn csv_read_column(file: &Path, column: &str) {
-    match csv::read_column(file, column) {
-        Ok(data) => {
-            println!(
-                "Read {} rows from column {:?}",
-                data.values.len(),
-                data.header
-            );
-        }
-        Err(error) => {
-            eprintln!("error: {error}");
-            std::process::exit(1);
-        }
+fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
+    match cli.command {
+        Command::Scan { file, column } => scan(file, column),
     }
+}
+
+fn scan(
+    file: PathBuf,
+    column: String,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let column_data = csv::read_column(&file, &column)?;
+
+    let mut analyzer = BenfordAnalyzer::new();
+
+    for value in &column_data.values {
+        analyzer.push(first_significant_digit(value));
+    }
+
+    let report = analyzer.finish()?;
+
+    render_benford_report(
+        &report,
+        &file,
+        &column_data.header,
+    );
+
+    Ok(())
 }
