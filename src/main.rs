@@ -1,9 +1,9 @@
 pub mod parser;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
+use anomali_rs::csv;
 use clap::{Parser, Subcommand};
-use anomali_rs::csv_reader;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -36,8 +36,8 @@ fn main() {
     }
 }
 
-fn csv_read_column(file: &PathBuf, column: &String) {
-    match csv_reader::read_column(&file, &column) {
+fn csv_read_column(file: &Path, column: &str) {
+    match csv::read_column(file, column) {
         Ok(data) => {
             println!(
                 "Read {} rows from column {:?}",

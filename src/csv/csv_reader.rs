@@ -1,16 +1,13 @@
+use crate::csv::csv_error::CsvReadError;
 use std::path::Path;
-use crate::csv_reader::csv_error::CsvReadError;
 
 pub struct ColumnData {
     pub header: String,
     pub values: Vec<String>,
 }
 
-pub fn read_column(
-    path: &Path,
-    column_name: &str,
-) -> Result<ColumnData, CsvReadError> {
-    let mut reader = csv::Reader::from_path(path)?;
+pub fn read_column(path: &Path, column_name: &str) -> Result<ColumnData, CsvReadError> {
+    let mut reader = ::csv::Reader::from_path(path)?;
     let headers = reader.headers()?.clone();
 
     let column_index = headers
